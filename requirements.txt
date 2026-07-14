@@ -3,3 +3,4 @@ pandas>=2.0
 statsmodels>=0.14
 matplotlib>=3.7
 yfinance>=0.2.18
+pytest>=7.0
