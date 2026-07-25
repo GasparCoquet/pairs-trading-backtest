@@ -40,7 +40,7 @@ selector.
 
 ## The real result
 
-Same tickers, same window, same parameters, same code - on real Yahoo Finance data:
+Same tickers, same window, same parameters, same code, on real Yahoo Finance data:
 
 |                | Claimed (synthetic) | **Actual (real data)** |
 |----------------|--------------------:|-----------------------:|
@@ -157,15 +157,15 @@ Was the ADF 'confirmation' a stricter second test?
 ```
 
 **The second test rejected zero of the 25 pairs the first test accepted.** It fired 74
-times where a correctly-sized test fires 25. It was not a filter, it was a rubber stamp - and had it ever been the binding constraint it would have *added* false positives, not
+times where a correctly-sized test fires 25. It was not a filter, it was a rubber stamp, and had it ever been the binding constraint it would have *added* false positives, not
 removed them. Selection now uses `statsmodels.tsa.stattools.coint`, which applies
 MacKinnon critical values that account for the estimated vector.
 
 ### 3. There was no stop-loss
 
 The strategy enters at |z| ≥ 2 and exits when the spread reverts to its mean. If the
-spread never reverts - the normal fate of a pair that was selected by a false-positive
-test and was never cointegrated to begin with - **there is no exit condition at all.**
+spread never reverts, the normal fate of a pair that was selected by a false-positive
+test and was never cointegrated to begin with, **there is no exit condition at all.**
 The position is held while the spread runs. That is the mechanism behind the 40.46%
 drawdown and the -18.65% day.
 
@@ -209,7 +209,7 @@ there is essentially nothing left to trade.** Benjamini-Hochberg leaves **2 pair
 across seven years**. Ten of the eleven windows select no pair at all and sit in cash.
 Only **75 of 1,386 days** carry any position.
 
-So the corrected strategy does not lose much money - but only because it almost never
+So the corrected strategy does not lose much money, but only because it almost never
 trades. That is not a fixed strategy. It is a strategy that has been correctly told it
 has no edge.
 
@@ -247,7 +247,7 @@ That is a negative result. It is the correct one.
 
 The generator that caused all this has exactly one legitimate use: it knows which pairs it
 made cointegrated, so it can be used as an answer key to test the selector. `--synthetic`
-now runs that test - and produces no performance number of any kind.
+now runs that test, and produces no performance number of any kind.
 
 `python run_backtest.py --synthetic` builds 20 independently seeded universes, each with 4
 pairs cointegrated by construction and 41 null pairs, and scores each selection rule:
@@ -271,13 +271,13 @@ selects strictly fewer false positives than the shipped rule; it exits non-zero 
 
 The naive ADF row is the bug in one line: **20.6% of the pairs that are not cointegrated
 by construction** are selected as cointegrated, against a nominal 5%. Correct critical
-values plus BH bring that to 4.5%, and Bonferroni to 0.5% - at a real cost in recall
+values plus BH bring that to 4.5%, and Bonferroni to 0.5%, at a real cost in recall
 (89% → 79% → 71%), which is the trade you are actually making when you choose FDR over
 FWER, and FWER over nothing.
 
 **The residual 4.5% under BH is not a bug, and I am not going to pretend it is zero.** BH
 controls the false discovery rate under independence or positive regression dependence.
-These 45 tests are drawn from only 10 underlying series, so they are strongly dependent - if one series happens to wander in a mean-reverting way, every pair containing it is
+These 45 tests are drawn from only 10 underlying series, so they are strongly dependent, if one series happens to wander in a mean-reverting way, every pair containing it is
 pulled toward rejection together. BH is approximate here. Bonferroni is valid under
 arbitrary dependence, which is why both are offered.
 
@@ -379,5 +379,5 @@ tests/
 3. **Trading window** (126 days): out-of-sample spread from the frozen hedge ratio, rolling
    20-day z-score, enter at |z| ≥ 2, exit at z = 0, optional stop at |z| ≥ `stop_loss_z`.
 4. **Portfolio**: equal weight across selected pairs. Windows with no surviving pair are
-   held flat at zero return - they are not dropped from the series.
+   held flat at zero return, they are not dropped from the series.
 5. **Costs**: 10 bps applied to each position change.
