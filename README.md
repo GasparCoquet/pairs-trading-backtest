@@ -31,9 +31,9 @@ The strategy was not finding cointegration in the market. It was finding cointeg
 in its own random number generator. Every performance figure in the old README came from
 that path.
 
-The silent fallback is gone. `fetch_prices` now raises `DataFetchError`; if the download
+The silent fallback is gone. `fetch_prices` now raises `DataFetchError`. If the download
 fails the program exits non-zero. Synthetic data is opt-in behind `--synthetic`, where it
-does the one honest job it is good for: acting as a labelled answer key to test the pair
+does the one honest job it is good for, acting as a labelled answer key to test the pair
 selector.
 
 ---
@@ -66,10 +66,10 @@ Trading Days:             1386
 Reproduce with `python run_backtest.py --correction none --criterion original`.
 
 A 40% drawdown and an 18.6% single-day loss on a book that is supposed to be
-market-neutral is the tell. This was never a low-risk strategy; the 9.96% max drawdown
+market-neutral is the tell. This was never a low-risk strategy. The 9.96% max drawdown
 was an artifact of a spread that mean-reverted because it had been built to.
 
-**On the Sharpe of 0.07 alongside a CAGR of -0.61%:** these are not inconsistent. The
+**On the Sharpe of 0.07 alongside a CAGR of -0.61%**, these are not inconsistent. The
 mean daily return is +0.0057%, which annualises arithmetically to +1.45%, but daily
 volatility is 1.27% and the volatility drag (-σ²/2 ≈ -2.03% per year) more than eats it.
 Sharpe is computed on arithmetic returns, CAGR on compounded ones. A strategy can have a
@@ -79,7 +79,7 @@ that, which is exactly the sort of thing this README is trying to stop doing.
 ![Equity curve, original rule on real data](docs/images_original/equity_curve.png)
 
 The drawdown is concentrated in March 2020. A genuinely market-neutral book should not
-care much about a market-wide crash; a book of spurious pairs, each of which is really a
+care much about a market-wide crash. A book of spurious pairs, each of which is really a
 naked directional bet dressed up as a hedge, cares enormously.
 
 ---
@@ -94,7 +94,7 @@ top `max_pairs = 3`.
 
 If *nothing* in the universe were cointegrated, 45 uncorrected tests at α = 0.05 would
 still be expected to produce **2.25 false rejections per window** by chance alone. Three
-slots to fill, 2.25 free false positives per window: the book can be filled end to end
+slots to fill, 2.25 free false positives per window. The book can be filled end to end
 with noise without a single genuine relationship existing.
 
 That is not a theoretical worry. It is what happens. Measured over the 11 formation
@@ -134,13 +134,13 @@ tickers.
 
 ### 2. The "stricter two-test confirmation" was a false-positive generator
 
-The old README advertised a two-step filter: Engle-Granger, then "an ADF test on the
+The old README advertised a two-step filter, first Engle-Granger, then "an ADF test on the
 spread residuals to confirm stationarity", described as *"a stricter two-test
 confirmation"*.
 
 `adf_test()` applied **standard Dickey-Fuller critical values to the residuals of an
 estimated cointegrating vector**. Those critical values assume the series being tested is
-observed. Here it is a fitted residual: OLS picked the hedge ratio precisely to minimise
+observed. Here it is a fitted residual. OLS picked the hedge ratio precisely to minimise
 its variance, i.e. to make it look as stationary as possible. The unit-root statistic is
 therefore biased toward rejection. This is exactly the distortion that Engle-Granger /
 MacKinnon critical values exist to absorb.
@@ -173,7 +173,7 @@ A `--stop-loss-z` option now closes a position when |z| exceeds a threshold, on 
 that a spread stretching further is evidence *against* the mean-reversion thesis that
 justified the trade. A stopped pair is retired for the rest of the trading window and
 re-tested at the next formation window. (Writing the test for this caught a bug in my own
-first version: simply flattening the position re-entered on the very next bar, because
+first version. Simply flattening the position re-entered on the very next bar, because
 |z| beyond the stop is also beyond the entry threshold. That is not a stop-loss, it is a
 round-trip cost applied to the same losing trade.)
 
@@ -204,7 +204,7 @@ Two things worth reading carefully.
 Sharpe, identical drawdown, identical 17 pair-windows. That is the proof that the ADF
 "confirmation" step never did anything.
 
-**Second, and this is the actual result: once the multiple-testing correction is applied,
+**Second, and this is the actual result. Once the multiple-testing correction is applied,
 there is essentially nothing left to trade.** Benjamini-Hochberg leaves **2 pair-windows
 across seven years**. Ten of the eleven windows select no pair at all and sit in cash.
 Only **75 of 1,386 days** carry any position.
@@ -219,10 +219,10 @@ error on a Sharpe estimated from that much data is far larger than the estimate.
 reporting it because it is what the code prints, not because I believe it. Anyone quoting
 "Sharpe 0.37" from this repo would be repeating the original sin in a smaller font.
 
-Note also *which* pairs survive BH: **GLD/MSFT** and **MSFT/SLV**. Even after correction,
+Note also *which* pairs survive BH, **GLD/MSFT** and **MSFT/SLV**. Even after correction,
 the only survivors are economically absurd. The most likely reading is that these are
 residual false positives that BH could not kill, not a discovery. A correction procedure
-cannot manufacture signal in a universe that has none; it can only stop you from trading
+cannot manufacture signal in a universe that has none. It can only stop you from trading
 noise, and here it stops you from trading almost everything.
 
 ![Equity curve after Benjamini-Hochberg correction](docs/images_corrected/equity_curve.png)
@@ -235,9 +235,10 @@ ran, correctly declines to trade anything.
 
 **Over 2018-2024, on this universe of 10 large caps and ETFs, with this methodology, I
 find no evidence of tradeable cointegration.** The apparent edge in the original version
-came from three sources, in descending order of importance: simulated data standing in
-for market data, 45 uncorrected hypothesis tests per window, and a confirmation test that
-confirmed nothing. Remove them and the strategy has nothing to trade.
+came from three sources. In descending order of importance, they are simulated data
+standing in for market data, 45 uncorrected hypothesis tests per window, and a
+confirmation test that confirmed nothing. Remove them and the strategy has nothing to
+trade.
 
 That is a negative result. It is the correct one.
 
@@ -245,7 +246,7 @@ That is a negative result. It is the correct one.
 
 ## The synthetic generator, repurposed
 
-The generator that caused all this has exactly one legitimate use: it knows which pairs it
+The generator that caused all this has exactly one legitimate use. It knows which pairs it
 made cointegrated, so it can be used as an answer key to test the selector. `--synthetic`
 now runs that test, and produces no performance number of any kind.
 
@@ -267,9 +268,9 @@ PASS: default selector recovers 3.15/4 true pairs per universe
 ```
 
 The run **asserts** that the corrected selector recovers the truly cointegrated pairs and
-selects strictly fewer false positives than the shipped rule; it exits non-zero otherwise.
+selects strictly fewer false positives than the shipped rule. It exits non-zero otherwise.
 
-The naive ADF row is the bug in one line: **20.6% of the pairs that are not cointegrated
+The naive ADF row is the bug in one line. **20.6% of the pairs that are not cointegrated
 by construction** are selected as cointegrated, against a nominal 5%. Correct critical
 values plus BH bring that to 4.5%, and Bonferroni to 0.5%, at a real cost in recall
 (89% → 79% → 71%), which is the trade you are actually making when you choose FDR over
