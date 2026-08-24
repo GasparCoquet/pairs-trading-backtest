@@ -349,7 +349,7 @@ Key flags:
 | Flag | Meaning |
 |---|---|
 | `--correction {bh,bonferroni,none}` | Multiple-testing control across the C(n,2) tests. `none` reproduces the original bug. |
-| `--criterion {mackinnon,naive_adf,original}` | Which test to select on. `mackinnon` is correct; the other two reproduce the original bugs. |
+| `--criterion {mackinnon,naive_adf,original}` | Which test to select on. `mackinnon` is correct, the other two reproduce the original bugs. |
 | `--stop-loss-z Z` | Close a position when \|z\| exceeds Z. Off by default. |
 | `--synthetic` | Run the selector validation harness on labelled simulated data. |
 
